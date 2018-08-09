@@ -1,0 +1,49 @@
+version: '3.4'
+services:
+    db:
+        image: postgres:9.6.3
+        #build: ./postgis
+        ports:
+            - "5432:5432"
+        environment:
+            - "POSTGRES_DB=${DB_NAME}"
+            - "POSTGRES_PASSWORD=${DB_PASS}"
+            - "POSTGRES_USER=${DB_USER}"
+        volumes:
+            - type: bind
+              source: ./postgres-init
+              target: /docker-entrypoint-initdb.d
+    flyway:
+        build: ./flyway
+        depends_on:
+            - "db"
+        entrypoint: ["/wait-for-pg.sh", "db", "5432", "${DB_NAME}", "${DB_USER}", "/flyway/flyway -user=${DB_USER} -password=${DB_PASS} -schemas=${DB_SCHEMA} -placeholders.main_schema=${DB_SCHEMA} -placeholders.connect_user=${DB_SCT_CONNECT_USER} -placeholders.connect_user_pass=${DB_SCT_CONNECT_PASS} -placeholders.admin_user=${DB_USER} migrate"]
+        working_dir: /flyway
+        links:
+            - "db:db"
+        volumes:
+            - type: bind
+              source: ../../db/migrations
+              target: /flyway/sql/main
+            - type: bind
+              source: ../../db/data
+              target: /flyway/sql/test_data
+            - type: bind
+              source: ./flyway/flyway.conf
+              target: /flyway/conf/flyway.conf
+    server:
+      build: ./server
+      depends_on:
+          - "db"
+      ports:
+        - "3000:3000"
+      environment:
+        - "DB_URL=${DB_URL}"
+        - "DB_CONNECT_USER=${DB_SCT_CONNECT_USER}"
+        - "DB_CONNECT_PASS=${DB_SCT_CONNECT_PASS}"
+      volumes:
+        - type: bind
+          source: ../../app
+          target: /usr/app
+      links:
+        - "db:db"

@@ -1,0 +1,11 @@
+## vim swap files
+*.swp
+
+## node.js ignores
+app/node_modules
+
+## intellij project files
+app/.idea/**/workspace.xml
+app/.idea/**/tasks.xml
+app/.idea/**/dictionaries
+
