@@ -8,7 +8,22 @@ app.get('/health', (req, res) => {
   req.send('OK');
 });
 
-app.post('/login', async (req, res) => {
+app.options('/login', (req, res) => {
+  res.set({
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Authorization',
+    'Access-Control-Allow-Origin': 'http://localhost:3001'
+  });
+
+  res.status(200).send();
+});
+
+app.get('/login', async (req, res, next) => {
+  res.set({
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Authorization',
+    'Access-Control-Allow-Origin': 'http://localhost:3001'
+  });
   try {
     const creds = Buffer.from(
       req.get('Authorization')
@@ -58,7 +73,13 @@ app.post('/login', async (req, res) => {
     });
   }
   catch (e) {
-    throw e;
+    if(e.statusCode === 400) {
+      res.set({'WWW-Authenticate': 'Basic realm="Authenticated user area"'});
+      res.status(401).send();
+    }
+    else {
+      next(e);
+    }
   }
 });
 

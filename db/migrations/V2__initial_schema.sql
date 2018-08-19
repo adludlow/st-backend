@@ -7,7 +7,7 @@ create table local_user (
 
 create table local_user_role (
   id serial primary key,
-  role_name,
+  role_name text,
   created_dt timestamp with time zone default now()
 );
 
