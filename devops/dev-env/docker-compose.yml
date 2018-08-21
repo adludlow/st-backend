@@ -41,6 +41,7 @@ services:
         - "DB_URL=${DB_URL}"
         - "DB_CONNECT_USER=${DB_SCT_CONNECT_USER}"
         - "DB_CONNECT_PASS=${DB_SCT_CONNECT_PASS}"
+        - "JWT_SECRET=${JWT_SECRET}"
       volumes:
         - type: bind
           source: ../../app

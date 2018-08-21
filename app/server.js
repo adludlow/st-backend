@@ -1,8 +1,11 @@
 const express = require('express');
 const rp = require('request-promise');
+const jwt = require('jsonwebtoken');
 const db = require('./db');
 
 const app = express();
+
+const secret = process.env.JWT_SECRET;
 
 app.get('/health', (req, res) => {
   req.send('OK');
@@ -16,6 +19,24 @@ app.options('/login', (req, res) => {
   });
 
   res.status(200).send();
+});
+
+app.get('/validate-token', (req, res, next) => {
+  const token = req.get('Token');
+  if(token === undefined) {
+    console.log('No Token header');
+    res.status(401).send();
+    return;
+  }
+  try {
+    const decoded = jwt.verify(token, secret);
+    res.status(200).send(decoded);
+    return;
+  }
+  catch(err) {
+    res.status(401).send();
+    return;
+  }
 });
 
 app.get('/login', async (req, res, next) => {
@@ -48,28 +69,41 @@ app.get('/login', async (req, res, next) => {
     let tokenResponse = await rp(accessTokenReq);
     let accessToken = tokenResponse.access_token;
 
+    const accountDetailsReq = {
+      method: 'GET',
+      uri: 'https://supercoach.heraldsun.com.au/api/afl/classic/v1/me',
+      auth: {
+        bearer: accessToken
+      },
+      json: true
+    };
+
+    let accountDetails = await rp(accountDetailsReq);
+
     let existingUser = await db.run_query('select * from local_user where username = $1', [username]);
     if(existingUser.length > 0) {
       console.log('user exists');
     }
     else {
       console.log('Creating new user.');
-      const accountDetailsReq = {
-        method: 'GET',
-        uri: 'https://supercoach.heraldsun.com.au/api/afl/classic/v1/me',
-        auth: {
-          bearer: accessToken
-        },
-        json: true
-      };
-
-      let accountDetails = await rp(accountDetailsReq);
       db.run_query('insert into local_user(username, sc_id) values($1, $2)', [username, accountDetails.id]);
     }
-    
-    res.status(200).send({
+
+    const userPayload = {
+      firstName: accountDetails.first_name,
+      lastName: accountDetails.last_name,
       username,
       accessToken
+    };
+
+    const jwtOptions = {
+      expiresIn: tokenResponse.expires_in
+    };
+
+    const token = jwt.sign(userPayload, secret, jwtOptions);
+
+    res.status(200).send({
+      token
     });
   }
   catch (e) {
