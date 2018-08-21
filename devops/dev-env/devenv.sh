@@ -77,3 +77,4 @@ export DB_SCT_CONNECT_USER=sct_connect
 export DB_NAME=sct
 export DB_SCHEMA=sct
 export DB_URL="postgres://db:5432/sct"
+export JWT_SECRET="Bv0UeIlDFlRnF0adcYMiL0YVjpuTDBZZ"
