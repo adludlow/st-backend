@@ -2,20 +2,37 @@ const express = require('express');
 const debug = require('debug')('st');
 const rp = require('request-promise');
 const jwt = require('jsonwebtoken');
-const db = require('./db');
-
+const user = require('./user');
 const router = express.Router();
 
 const secret = process.env.JWT_SECRET;
 
-router.options('/', (req, res) => {
-  res.set({
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Authorization',
-    'Access-Control-Allow-Origin': 'http://localhost:3001'
-  });
+const requireHeaders = (requiredHeaders) => {
+  return (req, res, next) => {
+    if(requiredHeaders.every(val => Object.keys(req.headers).includes(val.toLowerCase()))) {
+      next();
+    }
+    else {
+      res.status(400).send({ error: `Missing one or more required headers: ${requiredHeaders}` });
+    }
+  }
+};
 
-  res.status(200).send();
+const cors = (methods, headers, origins) => {
+  return (req, res, next) => {
+    res.set({
+      'Access-Control-Allow-Methods': methods,
+      'Access-Control-Allow-Headers': headers,
+      'Access-Control-Allow-Origin': origins
+    });
+    next();
+  };
+};
+
+router.options('/', 
+  cors('GET, OPTIONS', 'Authorization', 'http://localhost:3001'), 
+  (req, res) => {
+    res.status(200).send();
 });
 
 router.get('/validate-token', (req, res, next) => {
@@ -36,12 +53,10 @@ router.get('/validate-token', (req, res, next) => {
   }
 });
 
-router.get('/', async (req, res, next) => {
-  res.set({
-    'Access-Control-Allow-Methods': 'GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Authorization',
-    'Access-Control-Allow-Origin': 'http://localhost:3001'
-  });
+router.get('/', 
+  cors('GET, OPTIONS', 'Authorization', 'http://localhost:3001'), 
+  requireHeaders(['Authorization']), 
+  async (req, res, next) => {
   try {
     const creds = Buffer.from(
       req.get('Authorization')
@@ -77,13 +92,17 @@ router.get('/', async (req, res, next) => {
 
     let accountDetails = await rp(accountDetailsReq);
 
-    let existingUser = await db.run_query('select * from local_user where username = $1', [username]);
+    let existingUser = await user.getUser(username);
     if(existingUser.length > 0) {
       console.log('user exists');
     }
     else {
       console.log('Creating new user.');
-      db.run_query('insert into local_user(username, sc_id) values($1, $2)', [username, accountDetails.id]);
+      let newUser = {
+        username,
+        sc_id: accountDetails.id
+      };
+      const userId = await addUser(newUser);
     }
 
     const userPayload = {
