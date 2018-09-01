@@ -10,10 +10,10 @@ const secret = process.env.JWT_SECRET;
 const requireHeaders = (requiredHeaders) => {
   return (req, res, next) => {
     if(requiredHeaders.every(val => Object.keys(req.headers).includes(val.toLowerCase()))) {
-      next();
+      return next();
     }
     else {
-      res.status(400).send({ error: `Missing one or more required headers: ${requiredHeaders}` });
+      return res.status(400).send({ error: `Missing one or more required headers: ${requiredHeaders}` });
     }
   }
 };
@@ -25,35 +25,53 @@ const cors = (methods, headers, origins) => {
       'Access-Control-Allow-Headers': headers,
       'Access-Control-Allow-Origin': origins
     });
-    next();
+    return next();
   };
 };
 
-router.options('/', 
-  cors('GET, OPTIONS', 'Authorization', 'http://localhost:3001'), 
-  (req, res) => {
-    res.status(200).send();
-});
-
-router.get('/validate-token', (req, res, next) => {
-  const token = req.get('Token');
-  if(token === undefined) {
-    console.log('No Token header');
-    res.status(401).send();
-    return;
-  }
+const validateToken = (token) => {
   try {
-    const decoded = jwt.verify(token, secret);
-    res.status(200).send(decoded);
-    return;
+    return decoded = jwt.verify(token, secret);
   }
   catch(err) {
-    res.status(401).send();
-    return;
+    return false;
   }
+};
+
+const authenticateRequest = (req) => {
+  const token = req.get('Token');
+  if(token === undefined) {
+    return false;
+  }
+  const decodedToken = validateToken(token);
+  if (decodedToken) {
+    return decodedToken;
+  }
+  else {
+    return false;
+  }
+};
+
+const authenticateRequestMiddleware = () => (req, res, next) => {
+  if (authenticateRequest) {
+    return next();
+  }
+  else {
+    return res.status(401).send();
+  }
+};
+
+router.get('/validate-token', authenticateRequestMiddleware(), (req, res, next) => {
+  return res.status(200).send();
 });
 
-router.get('/', 
+router.options('/login', 
+  cors('GET, OPTIONS', 'Authorization', 'http://localhost:3001'), 
+  (req, res) => {
+    return res.status(200).send();
+});
+
+router.get('/login', 
   cors('GET, OPTIONS', 'Authorization', 'http://localhost:3001'), 
   requireHeaders(['Authorization']), 
   async (req, res, next) => {
@@ -102,7 +120,7 @@ router.get('/',
         username,
         sc_id: accountDetails.id
       };
-      const userId = await addUser(newUser);
+      const userId = await createUser(newUser);
     }
 
     const userPayload = {
@@ -118,19 +136,20 @@ router.get('/',
 
     const token = jwt.sign(userPayload, secret, jwtOptions);
 
-    res.status(200).send({
+    return res.status(200).send({
       token
     });
   }
   catch (e) {
     if(e.statusCode === 400) {
       res.set({'WWW-Authenticate': 'Basic realm="Authenticated user area"'});
-      res.status(401).send();
+      return res.status(401).send();
     }
     else {
-      next(e);
+      return next(e);
     }
   }
 });
 
 module.exports.router = router;
+module.exports.authenticateRequestMiddleware = authenticateRequestMiddleware;
