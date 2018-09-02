@@ -1,11 +1,13 @@
 const express = require('express');
 const health_router = require('./health').router;
 const login_router = require('./auth').router;
+const user_router = require('./user').router;
 
 const app = express();
 
 app.use('/health', health_router);
 app.use('/auth', login_router);
+app.use('/users', user_router);
 
 // Error handler.
 app.use((err, req, res, next) => {
