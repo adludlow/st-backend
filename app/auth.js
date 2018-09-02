@@ -61,8 +61,14 @@ const authenticateRequestMiddleware = () => (req, res, next) => {
   }
 };
 
-router.get('/validate-token', authenticateRequestMiddleware(), (req, res, next) => {
-  return res.status(200).send();
+router.get('/validate-token', (req, res, next) => {
+  const validationResult = authenticateRequest(req);
+  if(validationResult) {
+    return res.status(200).send(validationResult);
+  }
+  else {
+    return res.send.status(401).send();
+  }
 });
 
 router.options('/login', 
@@ -110,17 +116,17 @@ router.get('/login',
 
     let accountDetails = await rp(accountDetailsReq);
 
-    let existingUser = await user.getUser(username);
-    if(existingUser.length > 0) {
-      console.log('user exists');
+    let existingUser = await user.getUserByUsername(username);
+    if(existingUser) {
+      debug(`user ${username} exists`);
     }
     else {
-      console.log('Creating new user.');
+      debug(`Creating new user ${username}.`);
       let newUser = {
         username,
         sc_id: accountDetails.id
       };
-      const userId = await createUser(newUser);
+      const userId = await user.createUser(newUser);
     }
 
     const userPayload = {
