@@ -58,5 +58,7 @@ grant select, insert, update, delete on table player_team_rel to ${connect_user}
 grant select, insert, update, delete on table local_user to ${connect_user};
 grant select, insert, update, delete on table league to ${connect_user};
 grant select, insert, update, delete on table user_league_rel to ${connect_user};
+grant select, insert, update, delete on table local_user_role to ${connect_user};
+grant select, insert, update, delete on table local_user_role_rel to ${connect_user};
 
 grant usage, select on all sequences in schema ${main_schema} to ${connect_user}
