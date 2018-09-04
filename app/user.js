@@ -1,6 +1,8 @@
 const db  = require('./db');
 const debug = require('debug')('st');
 const express = require('express');
+const authenticationMiddleware = require('./auth').authenticateRequestMiddleware;
+const cors = require('./auth').cors;
 
 // User functions
 
@@ -98,7 +100,10 @@ router.get('/', async (req, res, next) => {
   return res.status(200).send(users);
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', 
+  cors('GET, OPTIONS', 'Authorization', 'http://localhost:3001'), 
+  authenticationMiddleware(),
+  async (req, res, next) => {
   const user = await getUser(req.params.id);
   if (user === undefined) {
     return res.status(404).send();
@@ -106,7 +111,10 @@ router.get('/:id', async (req, res, next) => {
   return res.status(200).send(user);
 });
 
-router.post('/:userId/role/:rolename', async (req, res, next) => {
+router.post('/:userId/role/:rolename', 
+  cors('GET, OPTIONS', 'Authorization', 'http://localhost:3001'), 
+  authenticationMiddleware(),
+  async (req, res, next) => {
   let user = await getUser(req.params.userId);
   if (user === undefined) {
     return res.status(404).send({ result: `User with id ${req.params.userId} does not exist.` });
