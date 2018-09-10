@@ -55,6 +55,10 @@ router.get('/',
     let existingUser = await user.getUserByUsername(username);
     if(existingUser) {
       debug(`user ${username} exists`);
+      const userUpdate = {
+        sc_id: accountDetails.id
+      };
+      const userId = await user.updateUser(existingUser.id, userUpdate);
     }
     else {
       debug(`Creating new user ${username}.`);

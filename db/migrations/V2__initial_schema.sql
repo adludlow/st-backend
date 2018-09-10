@@ -17,6 +17,7 @@ create table local_user_role_rel (
   role_id integer references local_user_role(id),
   created_dt timestamp with time zone default now()
 );
+create unique index user_role_rel_idx on local_user_role_rel(user_id, role_id);
 
 create table league (
   id serial primary key,
@@ -61,4 +62,13 @@ grant select, insert, update, delete on table user_league_rel to ${connect_user}
 grant select, insert, update, delete on table local_user_role to ${connect_user};
 grant select, insert, update, delete on table local_user_role_rel to ${connect_user};
 
-grant usage, select on all sequences in schema ${main_schema} to ${connect_user}
+grant usage, select on all sequences in schema ${main_schema} to ${connect_user};
+
+insert into local_user_role(role_name) values('app_admin');
+insert into local_user(username) values('${init_app_admin}');
+insert into local_user_role_rel(user_id, role_id)
+select u.id, r.id
+from local_user u,
+local_user_role r
+where u.username = '${init_app_admin}'
+and r.role_name = 'app_admin';

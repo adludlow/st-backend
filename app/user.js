@@ -4,6 +4,9 @@ const express = require('express');
 const authenticationMiddleware = require('./auth').authenticateRequestMiddleware;
 const cors = require('./auth').cors;
 
+const USER_ROLE_REL_EXISTS = -1;
+const UNKNOWN_ERROR = -100;
+
 // User functions
 
 const getRolesForUser = async (id) => {
@@ -63,19 +66,43 @@ const createUser = async (user) => {
   return await db.run_query('insert into local_user(username, sc_id) values($1, $2) returning id', [user.username, user.sc_id]);
 };
 
+const updateUser = async (id, user) => {
+  let sql = 'update local_user';
+  let paramIndex = 2;
+  let params = [id];
+  Object.keys(user).forEach((key) => {
+    sql = sql + ` set ${key} = $${paramIndex}`;
+    params.push(user[key]);
+  });
+  sql = sql + ` where id = $1`;
+
+  return await db.run_query(sql, params);
+};
+
 const createRole = async (role) => {
   return await db.run_query('insert into local_user_role(role_name) values($1) returning id', [role]);
 };
 
 const assignUserToRole = async (user_id, role_id) => {
-  return await db.run_query('insert into local_user_role_rel(user_id, role_id) values($1, $2) returning id', [user_id, role_id]);
+  try {
+    return await db.run_query('insert into local_user_role_rel(user_id, role_id) values($1, $2) returning id', [user_id, role_id]);
+  }
+  catch(e) {
+    if(e.code === '23505') {
+      console.log(`user with id ${user_id} is already assigned to role with id ${role_id}`);
+      return USER_ROLE_REL_EXISTS;
+    }
+    return UNKNOWN_ERROR;;
+  }
 };
 
 module.exports.getUser = getUser;
 module.exports.getUserByUsername = getUserByUsername;
 module.exports.createUser = createUser;
+module.exports.updateUser = updateUser;
 module.exports.createRole = createRole;
 module.exports.assignUserToRole = assignUserToRole;
+
 
 // Role functions
 
@@ -111,21 +138,39 @@ router.get('/:id',
   return res.status(200).send(user);
 });
 
+router.put('/:id',
+  cors('GET, OPTIONS', 'Authorization', 'http://localhost:3001'), 
+  authenticationMiddleware(),
+  async (req, res, next) => {
+
+}); 
+
 router.post('/:userId/role/:rolename', 
   cors('GET, OPTIONS', 'Authorization', 'http://localhost:3001'), 
   authenticationMiddleware(),
   async (req, res, next) => {
-  let user = await getUser(req.params.userId);
-  if (user === undefined) {
-    return res.status(404).send({ result: `User with id ${req.params.userId} does not exist.` });
-  }
-  const role = await getRoleByRolename(req.params.rolename);
-  if (role === undefined) {
-    return res.status(404).send({ result: `role ${req.params.rolename} does not exist` });
-  }
-  const id = await assignUserToRole(req.params.userId, role.id);
-  user.roles.push(role);
-  return res.status(200).send(user);
+    try {
+      let user = await getUser(req.params.userId);
+      if (user === undefined) {
+        return res.status(404).send({ result: `User with id ${req.params.userId} does not exist.` });
+      }
+      const role = await getRoleByRolename(req.params.rolename);
+      if (role === undefined) {
+        return res.status(404).send({ result: `role ${req.params.rolename} does not exist` });
+      }
+      const id = await assignUserToRole(req.params.userId, role.id);
+      if(id === -1) {
+        return res.status(409).send();
+      }
+      if(id < -1) {
+        return res.status(500).send();
+      }
+      user.roles.push(role);
+      return res.status(200).send(user);
+    }
+    catch(e) {
+      return next(e);
+    }
 });
 
 module.exports.router = router;

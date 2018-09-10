@@ -17,7 +17,7 @@ services:
         build: ./flyway
         depends_on:
             - "db"
-        entrypoint: ["/wait-for-pg.sh", "db", "5432", "${DB_NAME}", "${DB_USER}", "/flyway/flyway -user=${DB_USER} -password=${DB_PASS} -schemas=${DB_SCHEMA} -placeholders.main_schema=${DB_SCHEMA} -placeholders.connect_user=${DB_SCT_CONNECT_USER} -placeholders.connect_user_pass=${DB_SCT_CONNECT_PASS} -placeholders.admin_user=${DB_USER} migrate"]
+        entrypoint: ["/wait-for-pg.sh", "db", "5432", "${DB_NAME}", "${DB_USER}", "/flyway/flyway -user=${DB_USER} -password=${DB_PASS} -schemas=${DB_SCHEMA} -placeholders.main_schema=${DB_SCHEMA} -placeholders.connect_user=${DB_SCT_CONNECT_USER} -placeholders.connect_user_pass=${DB_SCT_CONNECT_PASS} -placeholders.admin_user=${DB_USER} -placeholders.init_app_admin=${INIT_APP_ADMIN} migrate"]
         working_dir: /flyway
         links:
             - "db:db"

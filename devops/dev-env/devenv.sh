@@ -66,7 +66,7 @@ function teardown() {
 #
 ###############################################################################
 function flyway() {
-    docker run -ti --rm --net devenv_default -v $DEV_ENV_DIR/../../db/migrations:/flyway/sql -v $DEV_ENV_DIR/flyway/flyway.conf:/flyway/conf/flyway.conf devenv_flyway $@ -user=${DB_USER} -password=${DB_PASS} -schemas=${DB_SCHEMA} -placeholders.main_schema=${DB_SCHEMA} -placeholders.connect_user=${DB_SCT_CONNECT_USER} -placeholders.connect_user_pass=${DB_SCT_CONNECT_PASS} -placeholders.admin_user=${DB_USER}
+    docker run -ti --rm --net devenv_default -v $DEV_ENV_DIR/../../db/migrations:/flyway/sql -v $DEV_ENV_DIR/flyway/flyway.conf:/flyway/conf/flyway.conf devenv_flyway $@ -user=${DB_USER} -password=${DB_PASS} -schemas=${DB_SCHEMA} -placeholders.main_schema=${DB_SCHEMA} -placeholders.connect_user=${DB_SCT_CONNECT_USER} -placeholders.connect_user_pass=${DB_SCT_CONNECT_PASS} -placeholders.admin_user=${DB_USER} -placeholders.init_app_admin=${INIT_APP_ADMIN}
 }
 
 export -f startup teardown
@@ -78,3 +78,4 @@ export DB_NAME=sct
 export DB_SCHEMA=sct
 export DB_URL="postgres://db:5432/sct"
 export JWT_SECRET="Bv0UeIlDFlRnF0adcYMiL0YVjpuTDBZZ"
+export INIT_APP_ADMIN="aludlow@gmail.com"
