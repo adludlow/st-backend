@@ -51,7 +51,9 @@ const authenticateRequest = (req) => {
 };
 
 const authenticateRequestMiddleware = () => (req, res, next) => {
-  if (authenticateRequest) {
+  const user = authenticateRequest(req);
+  if (user) {
+    req.authenticatedUser = user;
     return next();
   }
   else {

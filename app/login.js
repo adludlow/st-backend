@@ -53,12 +53,14 @@ router.get('/',
     let accountDetails = await rp(accountDetailsReq);
 
     let existingUser = await user.getUserByUsername(username);
+    let userId;
     if(existingUser) {
       debug(`user ${username} exists`);
       const userUpdate = {
         sc_id: accountDetails.id
       };
-      const userId = await user.updateUser(existingUser.id, userUpdate);
+      await user.updateUser(existingUser.id, userUpdate);
+      userId = existingUser.id;
     }
     else {
       debug(`Creating new user ${username}.`);
@@ -66,10 +68,11 @@ router.get('/',
         username,
         sc_id: accountDetails.id
       };
-      const userId = await user.createUser(newUser);
+      userId = await user.createUser(newUser);
     }
 
     const userPayload = {
+      userId: userId,
       firstName: accountDetails.first_name,
       lastName: accountDetails.last_name,
       username,

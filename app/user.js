@@ -62,6 +62,12 @@ const getUser = async (id) => {
   return await db.run_query('select * from local_user where id = $1', [id]);
 };
 
+const getUserMiddleware = async (req, res, next) => {
+  const fullUser = await getUser(req.authenticatedUser.userId);
+  req.fullUser = fullUser;
+  next();
+};
+
 const createUser = async (user) => {
   return await db.run_query('insert into local_user(username, sc_id) values($1, $2) returning id', [user.username, user.sc_id]);
 };
@@ -145,9 +151,23 @@ router.put('/:id',
 
 }); 
 
+const userHasRole = (req, res, next) => {
+  const role = req.params.rolename;
+  const user = req.fullUser;
+
+  if(user.roles.some( r => r.role_name === role )){
+    return next();
+  }
+  else {
+    return res.status(403).send("User is not authorised for this operation.");
+  }
+};
+
 router.post('/:userId/role/:rolename', 
   cors('GET, OPTIONS', 'Authorization', 'http://localhost:3001'), 
   authenticationMiddleware(),
+  getUserMiddleware,
+  userHasRole,
   async (req, res, next) => {
     try {
       let user = await getUser(req.params.userId);
