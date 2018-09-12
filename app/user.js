@@ -7,6 +7,8 @@ const cors = require('./auth').cors;
 const USER_ROLE_REL_EXISTS = -1;
 const UNKNOWN_ERROR = -100;
 
+const APP_ADMIN_ROLE = 'app_admin';
+
 // User functions
 
 const getRolesForUser = async (id) => {
@@ -62,9 +64,9 @@ const getUser = async (id) => {
   return await db.run_query('select * from local_user where id = $1', [id]);
 };
 
-const getUserMiddleware = async (req, res, next) => {
+const getRequestingUserMiddleware = async (req, res, next) => {
   const fullUser = await getUser(req.authenticatedUser.userId);
-  req.fullUser = fullUser;
+  req.requestingUserFull = fullUser;
   next();
 };
 
@@ -127,12 +129,14 @@ const addRole = async (rolename) => {
 
 const router = express.Router();
 
-router.get('/', async (req, res, next) => {
+router.get('/',
+  authenticationMiddleware(),
+  async (req, res, next) => {
   const users = await getUsers();
 
   return res.status(200).send(users);
 });
-
+   
 router.get('/:id', 
   cors('GET, OPTIONS', 'Authorization', 'http://localhost:3001'), 
   authenticationMiddleware(),
@@ -151,11 +155,25 @@ router.put('/:id',
 
 }); 
 
-const userHasRole = (req, res, next) => {
-  const role = req.params.rolename;
-  const user = req.fullUser;
+const userIsAdmin = (user) => {
+  if (user.roles.some( r => r.role_name === APP_ADMIN_ROLE )) {
+    return true;
+  }
+  return false;
+};
 
-  if(user.roles.some( r => r.role_name === role )){
+// Checks if the requesting user in req.requestingUserFull is assigned to the
+// same role as the role in the rolename path param.
+const requestingUserHasRole = (passForAdmin = false) => (req, res, next) => {
+  const role = req.params.rolename;
+  const requestingUser = req.requestingUserFull;
+
+  if (requestingUser.roles.some( (r) => {
+    if (passForAdmin && r.role_name === APP_ADMIN_ROLE) {
+      return true;
+    }
+    return r.role_name === role
+  })){
     return next();
   }
   else {
@@ -166,8 +184,8 @@ const userHasRole = (req, res, next) => {
 router.post('/:userId/role/:rolename', 
   cors('GET, OPTIONS', 'Authorization', 'http://localhost:3001'), 
   authenticationMiddleware(),
-  getUserMiddleware,
-  userHasRole,
+  getRequestingUserMiddleware,
+  requestingUserHasRole(true),
   async (req, res, next) => {
     try {
       let user = await getUser(req.params.userId);
