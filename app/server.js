@@ -4,6 +4,7 @@ const auth_router = require('./auth').router;
 const user_router = require('./user').router;
 const login_router = require('./login').router;
 const player_router = require('./player').router;
+const sync_router = require('./sync').router;
 
 const app = express();
 
@@ -11,7 +12,7 @@ app.use('/health', health_router);
 app.use('/auth', auth_router);
 app.use('/users', user_router);
 app.use('/login', login_router);
-app.use('/players', player_router);
+app.use('/sync', sync_router);
 
 // Error handler.
 app.use((err, req, res, next) => {
