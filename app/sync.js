@@ -31,32 +31,39 @@ const getAllPlayersWithDetail = async () => {
   const currentPlayers = await getAllPlayers();
   for (let player of currentPlayers) {
     let playerDetail = await getPlayerDetail(player);
-    detailedPlayers.push({
-      ...player,
-      detail: playerDetail
-    });
+    detailedPlayers.push([
+      player.id,
+      `${player.first_name} ${player.last_name}`,
+      playerDetail
+    ]);
   }
   return detailedPlayers;
 };
 
 const syncPlayersWithSC = async (sc_token, includeStats) => {
+  console.log('Retrieving players...');
   const players = await getAllPlayersWithDetail();
-  console.log(players.length);
+  console.log('Players retreived.');
 
-  //players.forEach( async (player) => {
-  //  const insertStatement = `insert into player(sc_id, name, attributes) values($1, $2, $3)`;
-  //  db.run_query(insertStatement, [player.id, `${player.first_name} ${player.last_name}`, playerInfoResponse]);
-  //});
+  console.log('Inserting players into db...');
+  const insertStatement = `insert into player(sc_id, name, attributes) values($1, $2, $3)`;
+  for (let player of players) {
+    await db.run_query(insertStatement, player)
+  }
+  console.log('Players inserted.');
 };
 
 router.get('/players',
   authenticationMiddleware(),
   async (req, res, next) => {
+    res.status(200).send(
+      {
+        result: 'Sync started.'
+      }
+    );
     // TODO: Currently sync. SHould store the job somewhere then send a
     // response indicating the job has started.
-    await syncPlayersWithSC(undefined, false);
-
-    return res.status(200).send();
+    return await syncPlayersWithSC(undefined, false);
 });
 
 module.exports.router = router;
