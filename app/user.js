@@ -162,6 +162,15 @@ const userIsAdmin = (user) => {
   return false;
 };
 
+const userIsAdminMiddleware = (req, res, next) => {
+  const requestingUser = req.requestingUserFull;
+  if (userIsAdmin(requestingUser)) {
+    return next();
+  } else {
+    return res.status(403).send("User is not authorised for this operation.");
+  }
+};
+
 // Checks if the requesting user in req.requestingUserFull is assigned to the
 // same role as the role in the rolename path param.
 const requestingUserHasRole = (passForAdmin = false) => (req, res, next) => {
@@ -212,3 +221,5 @@ router.post('/:userId/role/:rolename',
 });
 
 module.exports.router = router;
+module.exports.userIsAdminMiddleware = userIsAdminMiddleware;
+module.exports.getRequestingUserMiddleware = getRequestingUserMiddleware;
