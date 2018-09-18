@@ -40,7 +40,7 @@ const getAllPlayersWithDetail = async () => {
   let detailedPlayers = [];
   const currentPlayers = await getAllPlayers();
 
-  for (let players of chunkArray(currentPlayers, 20)) {
+  for (let players of chunkArray(currentPlayers, 10)) {
     let parray = [];
     players.forEach((player) => {
       parray.push(getPlayerDetail(player));
@@ -75,12 +75,17 @@ router.get('/players',
   user.getRequestingUserMiddleware,
   user.userIsAdminMiddleware,
   async (req, res, next) => {
-    res.status(200).send(
-      {
-        result: 'Sync started.'
-      }
-    );
-    return await syncPlayersWithSC(undefined, false);
+    try {
+      res.status(200).send(
+        {
+          result: 'Sync started.'
+        }
+      );
+      return await syncPlayersWithSC(undefined, false);
+    }
+    catch(err) {
+      return next(err);
+    }
 });
 
 module.exports.router = router;
