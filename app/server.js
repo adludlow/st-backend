@@ -4,6 +4,7 @@ const auth_router = require('./auth').router;
 const user_router = require('./user').router;
 const login_router = require('./login').router;
 const player_router = require('./player').router;
+const league_router = require('./league').router;
 const sync_router = require('./sync').router;
 
 const app = express();
