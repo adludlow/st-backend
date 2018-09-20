@@ -4,6 +4,8 @@ const debug = require('debug')('st');
 const jwt = require('jsonwebtoken');
 const user = require('./user');
 const { requireHeaders, cors, jwtSecret } = require('./auth');
+const ds = require('./datasource');
+
 const router = express.Router();
 
 router.options('/', 
@@ -69,6 +71,9 @@ router.get('/',
         sc_id: accountDetails.id
       };
       userId = await user.createUser(newUser);
+      const team = await ds.getTeamForUser(newUser);
+      debug(team);
+      de
     }
 
     const userPayload = {

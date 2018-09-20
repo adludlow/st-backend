@@ -52,6 +52,27 @@ const getAllPlayersWithDetail = async () => {
   return detailedPlayers;
 };
 
+const getTeamForUser = async (user) => {
+  let getTeamsReq = {
+    method: 'GET',
+    uri: `https://supercoach.heraldsun.com.au/api/afl/classic/v1/users/${user.sc_id}/userteams`,
+    json: true
+  };
+
+  const teams = await rp(getTeamsReq);
+  if (teams.length > 0) {
+    const team = teams[0];
+    return {
+      sc_id: team.id,
+      name: team.teamname,
+      attributes: team
+    };
+  }
+  else {
+    return {};
+  }
+};
+
 module.exports.getAllPlayersWithDetail = getAllPlayersWithDetail;
 module.exports.getPlayerDetail = getPlayerDetail;
 module.exports.getAllPlayers = getAllPlayers;

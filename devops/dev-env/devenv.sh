@@ -79,3 +79,4 @@ export DB_SCHEMA=sct
 export DB_URL="postgres://db:5432/sct"
 export JWT_SECRET="Bv0UeIlDFlRnF0adcYMiL0YVjpuTDBZZ"
 export INIT_APP_ADMIN="aludlow@gmail.com"
+export DEBUG="supertrader"

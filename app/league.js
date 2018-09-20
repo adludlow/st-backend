@@ -6,7 +6,7 @@ const router = express.Router();
 
 const LEAGUE_EXISTS = -1;
 
-const addLeague = (leagueid) => {
+const addLeague = async (leagueid) => {
   try {
     return await db.run_query('insert into league (sc_id) values($1) returning id', leagueid);
   }
