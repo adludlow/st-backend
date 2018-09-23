@@ -2,6 +2,7 @@ create table local_user (
   id serial primary key,
   sc_id numeric,
   username text,
+  active boolean,
   created_dt timestamp with time zone default now()
 );
 
@@ -92,7 +93,7 @@ grant select, insert, update, delete on table season to ${connect_user};
 grant usage, select on all sequences in schema ${main_schema} to ${connect_user};
 
 insert into local_user_role(role_name) values('app_admin');
-insert into local_user(username) values('${init_app_admin}');
+insert into local_user(username, active) values('${init_app_admin}', FALSE);
 insert into local_user_role_rel(user_id, role_id)
 select u.id, r.id
 from local_user u,

@@ -76,3 +76,4 @@ const getTeamForUser = async (user) => {
 module.exports.getAllPlayersWithDetail = getAllPlayersWithDetail;
 module.exports.getPlayerDetail = getPlayerDetail;
 module.exports.getAllPlayers = getAllPlayers;
+module.exports.getTeamForUser = getTeamForUser;

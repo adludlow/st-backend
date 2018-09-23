@@ -75,14 +75,15 @@ const createUser = async (user) => {
 };
 
 const updateUser = async (id, user) => {
-  let sql = 'update local_user';
+  let sql = 'update local_user set ';
   let paramIndex = 2;
   let params = [id];
   Object.keys(user).forEach((key) => {
-    sql = sql + ` set ${key} = $${paramIndex}`;
+    sql = sql + `${key} = $${paramIndex},`;
+    paramIndex++;
     params.push(user[key]);
   });
-  sql = sql + ` where id = $1`;
+  sql = sql.slice(0, -1) + ` where id = $1`;
 
   return await db.run_query(sql, params);
 };

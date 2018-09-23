@@ -56,15 +56,22 @@ router.get('/',
 
     let existingUser = await user.getUserByUsername(username);
     let userId;
-    if(existingUser) {
+    if(existingUser && existingUser.active) {
       debug(`user ${username} exists`);
       const userUpdate = {
         sc_id: accountDetails.id
       };
       await user.updateUser(existingUser.id, userUpdate);
       userId = existingUser.id;
-    }
-    else {
+    } else if (existingUser && !existingUser.active) {
+      const userUpdate = {
+        sc_id: accountDetails.id,
+        active: true
+      };
+      await user.updateUser(existingUser.id, userUpdate);
+      const team = await ds.getTeamForUser(existingUser);
+      debug(team);
+    } else {
       debug(`Creating new user ${username}.`);
       let newUser = {
         username,
@@ -73,7 +80,6 @@ router.get('/',
       userId = await user.createUser(newUser);
       const team = await ds.getTeamForUser(newUser);
       debug(team);
-      de
     }
 
     const userPayload = {
