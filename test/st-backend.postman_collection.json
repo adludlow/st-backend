@@ -1,0 +1,512 @@
+{
+	"info": {
+		"_postman_id": "1137c9ce-302f-4dc9-8f04-0546190ed47e",
+		"name": "st-backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "supercoach-API",
+			"item": [
+				{
+					"name": "players-with-stats",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "2xW9ZEcukFzY9cc6hXhGkOtYdX9yp7yb7M9KIR8V",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "https://supercoach.heraldsun.com.au/api/afl/classic/v1/players-cf?embed=player_stats",
+							"protocol": "https",
+							"host": [
+								"supercoach",
+								"heraldsun",
+								"com",
+								"au"
+							],
+							"path": [
+								"api",
+								"afl",
+								"classic",
+								"v1",
+								"players-cf"
+							],
+							"query": [
+								{
+									"key": "embed",
+									"value": "player_stats"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "players",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "https://supercoach.heraldsun.com.au/api/afl/classic/v1/players-cf",
+							"protocol": "https",
+							"host": [
+								"supercoach",
+								"heraldsun",
+								"com",
+								"au"
+							],
+							"path": [
+								"api",
+								"afl",
+								"classic",
+								"v1",
+								"players-cf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "individual-player",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "https://supercoach.heraldsun.com.au/api/afl/classic/v1/players/168?embed=player_stats,positions",
+							"protocol": "https",
+							"host": [
+								"supercoach",
+								"heraldsun",
+								"com",
+								"au"
+							],
+							"path": [
+								"api",
+								"afl",
+								"classic",
+								"v1",
+								"players",
+								"168"
+							],
+							"query": [
+								{
+									"key": "embed",
+									"value": "player_stats,positions"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "league",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "2xW9ZEcukFzY9cc6hXhGkOtYdX9yp7yb7M9KIR8V",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "https://supercoach.heraldsun.com.au/api/afl/classic/v1/leagues/104630/ladderAndFixtures?round=23",
+							"protocol": "https",
+							"host": [
+								"supercoach",
+								"heraldsun",
+								"com",
+								"au"
+							],
+							"path": [
+								"api",
+								"afl",
+								"classic",
+								"v1",
+								"leagues",
+								"104630",
+								"ladderAndFixtures"
+							],
+							"query": [
+								{
+									"key": "round",
+									"value": "23"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user teams",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1fxrYSCDGXqZuoX9Xvf7DlLeDztDZ2HEf3Aqwx7E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "https://supercoach.heraldsun.com.au/api/afl/classic/v1/users/86228/userteams",
+							"protocol": "https",
+							"host": [
+								"supercoach",
+								"heraldsun",
+								"com",
+								"au"
+							],
+							"path": [
+								"api",
+								"afl",
+								"classic",
+								"v1",
+								"users",
+								"86228",
+								"userteams"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "leagues for user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1fxrYSCDGXqZuoX9Xvf7DlLeDztDZ2HEf3Aqwx7E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "https://supercoach.heraldsun.com.au/api/afl/classic/v1/userteams/66121/leagues",
+							"protocol": "https",
+							"host": [
+								"supercoach",
+								"heraldsun",
+								"com",
+								"au"
+							],
+							"path": [
+								"api",
+								"afl",
+								"classic",
+								"v1",
+								"userteams",
+								"66121",
+								"leagues"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "League Ladder & fixture",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1fxrYSCDGXqZuoX9Xvf7DlLeDztDZ2HEf3Aqwx7E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "https://supercoach.heraldsun.com.au/api/afl/classic/v1/leagues/104630/ladderAndFixtures?round=23",
+							"protocol": "https",
+							"host": [
+								"supercoach",
+								"heraldsun",
+								"com",
+								"au"
+							],
+							"path": [
+								"api",
+								"afl",
+								"classic",
+								"v1",
+								"leagues",
+								"104630",
+								"ladderAndFixtures"
+							],
+							"query": [
+								{
+									"key": "round",
+									"value": "23"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Players in Team",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "1fxrYSCDGXqZuoX9Xvf7DlLeDztDZ2HEf3Aqwx7E",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {},
+						"url": {
+							"raw": "https://supercoach.heraldsun.com.au/api/afl/classic/v1/userteams/66121/statsPlayers?round=23",
+							"protocol": "https",
+							"host": [
+								"supercoach",
+								"heraldsun",
+								"com",
+								"au"
+							],
+							"path": [
+								"api",
+								"afl",
+								"classic",
+								"v1",
+								"userteams",
+								"66121",
+								"statsPlayers"
+							],
+							"query": [
+								{
+									"key": "round",
+									"value": "23"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/auth/login.options",
+			"request": {
+				"method": "OPTIONS",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/auth/login.get",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "aludlow@gmail.com",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "P00nTang*",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/auth/validate-token",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaXJzdE5hbWUiOiJBZHJpYW4iLCJsYXN0TmFtZSI6Ikx1ZGxvdyIsInVzZXJuYW1lIjoiYWx1ZGxvd0BnbWFpbC5jb20iLCJhY2Nlc3NUb2tlbiI6IldlcE9rdkdCbjExMUtYZThGZklGRU5EWEhzcFlTaDlWcHY0emd5V2ciLCJpYXQiOjE1MzU4MDY3NTcsImV4cCI6MTUzNjQxMTU1N30.JuZd248kHAxHKCuS5Q6fnwyDXzIQWDfbfBcVCrz-gAM"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/auth/validate-token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"auth",
+						"validate-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/users.get",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImZpcnN0TmFtZSI6IkFkcmlhbiIsImxhc3ROYW1lIjoiTHVkbG93IiwidXNlcm5hbWUiOiJhbHVkbG93QGdtYWlsLmNvbSIsImFjY2Vzc1Rva2VuIjoiajZleVAxWjFndkZvd2t6eHprNTBvcnFOSjFvN0JpRmFxOFBTVndHNSIsImlhdCI6MTUzNzM1NDc2OSwiZXhwIjoxNTM3OTU5NTY5fQ.DODFzN0XYbB6cLsWusPUGLUkLQd1fsNKlSKxTRRcuVk"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/users/id.get",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImZpcnN0TmFtZSI6IkFkcmlhbiIsImxhc3ROYW1lIjoiTHVkbG93IiwidXNlcm5hbWUiOiJhbHVkbG93QGdtYWlsLmNvbSIsImFjY2Vzc1Rva2VuIjoiZmFjdzFlbHRFUk1KRGthWWJHSUM4REgyY2dQMFZ3NmtrTkx1TnRyMSIsImlhdCI6MTUzNjc0NzQxNiwiZXhwIjoxNTM3MzUyMjE2fQ.1iFDnNz4jPq3H3AhstjHADTgfc8JdKENAyMcCibtsjM"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/users/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/users/:id/role/:rolename.post",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImZpcnN0TmFtZSI6IkFkcmlhbiIsImxhc3ROYW1lIjoiTHVkbG93IiwidXNlcm5hbWUiOiJhbHVkbG93QGdtYWlsLmNvbSIsImFjY2Vzc1Rva2VuIjoiZU5xNnByWUhaUm1UUldwRFAzSm81OEFDcjJYcTZQbGZkblFrNUEzbSIsImlhdCI6MTUzNjY2ODY3NCwiZXhwIjoxNTM3MjczNDc0fQ.cGZiKEjzLN0m5KlLBqlJmSzuaFJ_t-Q0D2mfSiH31Fk"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/users/1/role/app_admin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"users",
+						"1",
+						"role",
+						"app_admin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/sync/players",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImZpcnN0TmFtZSI6IkFkcmlhbiIsImxhc3ROYW1lIjoiTHVkbG93IiwidXNlcm5hbWUiOiJhbHVkbG93QGdtYWlsLmNvbSIsImFjY2Vzc1Rva2VuIjoiajZleVAxWjFndkZvd2t6eHprNTBvcnFOSjFvN0JpRmFxOFBTVndHNSIsImlhdCI6MTUzNzM1NDc2OSwiZXhwIjoxNTM3OTU5NTY5fQ.DODFzN0XYbB6cLsWusPUGLUkLQd1fsNKlSKxTRRcuVk"
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://localhost:3000/sync/players",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"sync",
+						"players"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
