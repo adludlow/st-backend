@@ -1,4 +1,5 @@
 const rp = require('request-promise');
+const debug = require('debug')('st');
 
 const getAllPlayers = async () => {
   const getPlayersReq = {
@@ -53,10 +54,14 @@ const getAllPlayersWithDetail = async () => {
 };
 
 const getTeamForUser = async (user) => {
+  debug(user);
   let getTeamsReq = {
     method: 'GET',
     uri: `https://supercoach.heraldsun.com.au/api/afl/classic/v1/users/${user.sc_id}/userteams`,
-    json: true
+    json: true,
+    headers: {
+      Authorization: `Bearer ${user.accessToken}`
+    }
   };
 
   const teams = await rp(getTeamsReq);

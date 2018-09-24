@@ -54,41 +54,42 @@ router.get('/',
 
     let accountDetails = await rp(accountDetailsReq);
 
+    let userPayload = {
+      firstName: accountDetails.first_name,
+      lastName: accountDetails.last_name,
+      username,
+      accessToken,
+      sc_id: accountDetails.id
+    };
+
     let existingUser = await user.getUserByUsername(username);
-    let userId;
-    if(existingUser && existingUser.active) {
-      debug(`user ${username} exists`);
-      const userUpdate = {
-        sc_id: accountDetails.id
-      };
-      await user.updateUser(existingUser.id, userUpdate);
-      userId = existingUser.id;
-    } else if (existingUser && !existingUser.active) {
-      const userUpdate = {
-        sc_id: accountDetails.id,
-        active: true
-      };
-      await user.updateUser(existingUser.id, userUpdate);
-      const team = await ds.getTeamForUser(existingUser);
-      debug(team);
+    if(existingUser) {
+      userPayload.userId = existingUser.id;
+      if (existingUser.active) {
+      debug(`User ${username} exists and is active.`);
+        const userUpdate = {
+          sc_id: accountDetails.id
+        };
+        await user.updateUser(existingUser.id, userUpdate);
+      } else {
+        debug(`User ${username} exists but is not active.`)
+        const userUpdate = {
+          sc_id: accountDetails.id,
+          active: true
+        };
+        await user.updateUser(existingUser.id, userUpdate);
+        const team = await ds.getTeamForUser(userPayload);
+      } 
     } else {
+      debug(`User ${username} does not exist.`)
       debug(`Creating new user ${username}.`);
       let newUser = {
         username,
         sc_id: accountDetails.id
       };
-      userId = await user.createUser(newUser);
-      const team = await ds.getTeamForUser(newUser);
-      debug(team);
+      userPayload.userId = await user.createUser(newUser);
+      const team = await ds.getTeamForUser(userPayload);
     }
-
-    const userPayload = {
-      userId: userId,
-      firstName: accountDetails.first_name,
-      lastName: accountDetails.last_name,
-      username,
-      accessToken
-    };
 
     const jwtOptions = {
       expiresIn: tokenResponse.expires_in
